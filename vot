@@ -1,0 +1,139 @@
+
+#include <iostream>
+#include <windows.h>
+#include <iomanip>
+#include <stdio.h>
+#include <math.h>
+using namespace std;
+
+void qus(int le, int r, double* arrw, double* arrq, double* arrc)
+{
+double sr;
+sr = arrc[le];
+double temp;
+double tempc;
+int le1 = le;
+int r1 = r;
+
+while (le < r)
+{
+while (arrc[le] < sr)
+le++;
+while (arrc[r] > sr)
+r--;
+if (le <= r)
+{tempc = arrc[le];
+arrc[le] = arrc[r];
+arrc[r] = tempc;
+temp = arrw[le];
+arrw[le] = arrw[r];
+arrw[r] = temp;
+temp = arrq[le];
+arrq[le] = arrq[r];
+arrq[r] = temp;
+le++;
+r--;
+}
+}
+
+if (le1 < r)
+qus(le1, r, arrw, arrq, arrc);
+if (le < r1)
+qus(le, r1, arrw, arrq, arrc);
+}
+
+double Langrange (double *arrx, double *arrfx, int n, double x0)
+{
+	double fx0 = 0;
+	for (int i = 0; i < n; i++)
+	{double p = 1;
+	for (int j = 0; j < n; j++)
+		if (i != j)
+			p = p * (x0 - arrx[j])/(arrx[i] - arrx[j]);
+	fx0 = fx0 + p*arrfx[i];
+	}
+	return fx0;
+}
+
+double Newton (double *arrx, double *arrfx, int n, double x0)
+{
+	double fx0 = arrfx[0];
+	for (int i = 1; i < n; i++)
+	{
+		double f = 0;
+	for (int j = 0; j <= i; j++)
+		{
+			double p = 1;
+	for (int k = 0; k <= i; k++)
+	{
+		if (k != j)
+			p = p * (arrx[j] - arrx[k]);
+	}
+	f = f + arrfx[j]/p;
+	}
+	for (int j = 0; j < i; j++)
+		f = f * (x0 - arrx[j]);
+	fx0 = fx0 + f;
+	}
+	return fx0;
+}
+
+
+int main()
+{
+	setlocale(LC_CTYPE,"Russian");
+	static const TCHAR* TITLE = TEXT("Задача алгебраического интерполирования, вариант 5");
+	SetConsoleTitle(TITLE);
+	bool у_меня_кончилась_фантазия = 1;
+	while (у_меня_кончилась_фантазия == 1)
+	{
+	int m, n;
+	double x0;
+	cout << "Введите количество узлов." << endl;
+	cin >> m;
+	cout << "Введите степень искомого полинома." << endl;
+	cin >> n;
+	int thank_you_for_your_patience = -1;
+	while (n > m)
+	{ thank_you_for_your_patience++;
+		cout << "Вы хотите полином степени " << n << "? К сожалению, это невозможно. Введите степень, которая будет меньше количества узлов, то есть меньше, чем " << m << ".";
+	 for (int i (0); i < thank_you_for_your_patience/3; i++)
+	 { if (i == 0)
+		 cout << " Прислушайтесь к моим словам и введите подходящую степень, пожалуйста";
+	 if (i > 0)
+	 cout << "-пожалуйста";
+	 if (i == thank_you_for_your_patience/3 - 1 && thank_you_for_your_patience >=3)
+		 cout << "!";
+	 }
+	cout << endl;
+	cin >> n;
+	}
+	cout << "Введите точку интерполирования, в которой будет искаться значение полинома." << endl;
+	cin >> x0;
+	double *array_for_x = new double[m];
+	double *array_for_fx = new double[m];
+	for (int i = 0; i < m; i++)
+	{
+	cout << "Введите точку х." << endl;
+	cin >> array_for_x[i];
+	cout << "Введите значение функции в ней." << endl;
+	cin >> array_for_fx[i];
+	}
+	double *dist = new double[m];
+	for (int i = 0; i < m; i++)
+		dist[i] = fabs(array_for_x[i] - x0);
+	system ("cls");
+	qus (0, m - 1, array_for_fx, array_for_x, dist);
+	delete [] dist;
+
+	cout << setw(10) << "x" << setw(10) << "f(x)" << endl;
+	for (int i = 0; i < m; i++)
+		cout << setw(10) << array_for_x[i] << setw(10) << array_for_fx[i] << endl;
+	cout << "Ищем значение функции в точке " << x0 << " с помощью полинома степени " << n << ", построенного по приведённой выше таблице." <<  endl;
+	cout << "Значение по Лагранжу: "  << Langrange (array_for_x,  array_for_fx, n, x0) << endl;
+	cout << "Значение по Ньютону: " << Newton (array_for_x,  array_for_fx, n, x0) << endl;
+	cout << "Введите 1, чтобы повторить приключение, введите 0, чтобы сбежать из этой программы." << endl;
+	cin >> у_меня_кончилась_фантазия;
+}
+	return 0;
+}
