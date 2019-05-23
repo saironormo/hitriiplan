@@ -1,0 +1,151 @@
+#include <iostream>
+#include <windows.h>
+#include <iomanip>
+#include <stdio.h>
+#include <math.h>
+using namespace std;
+
+double f(double x)
+{
+	return cos(x)+ 2*x;
+}
+
+
+void qus(int le, int r, double* arrw, double* arrq, double* arrc)
+{
+double sr;
+sr = arrc[le];
+double temp;
+double tempc;
+int le1 = le;
+int r1 = r;
+
+while (le < r)
+{
+while (arrc[le] < sr)
+le++;
+while (arrc[r] > sr)
+r--;
+if (le <= r)
+{tempc = arrc[le];
+arrc[le] = arrc[r];
+arrc[r] = tempc;
+temp = arrw[le];
+arrw[le] = arrw[r];
+arrw[r] = temp;
+temp = arrq[le];
+arrq[le] = arrq[r];
+arrq[r] = temp;
+le++;
+r--;
+}
+}
+
+if (le1 < r)
+qus(le1, r, arrw, arrq, arrc);
+if (le < r1)
+qus(le, r1, arrw, arrq, arrc);
+}
+
+double Langrange (double *arrx, double *arrfx, int n, double x0)
+{
+ double fx0 = 0;
+ for (int i = 0; i < n; i++)
+ {double p = 1;
+ for (int j = 0; j < n; j++)
+  if (i != j)
+   p = p * (x0 - arrx[j])/(arrx[i] - arrx[j]);
+ fx0 = fx0 + p*arrfx[i];
+ }
+ return fx0;
+}
+
+double Newton (double *arrx, double *arrfx, int n, double x0)
+{
+ double fx0 = arrfx[0];
+ for (int i = 1; i < n; i++)
+ {
+  double f = 0;
+ for (int j = 0; j <= i; j++)
+  {
+   double p = 1;
+ for (int k = 0; k <= i; k++)
+ {
+  if (k != j)
+   p = p * (arrx[j] - arrx[k]);
+ }
+ f = f + arrfx[j]/p;
+ }
+ for (int j = 0; j < i; j++)
+  f = f * (x0 - arrx[j]);
+ fx0 = fx0 + f;
+ }
+ return fx0;
+}
+
+
+
+
+int main()
+{
+	setlocale(LC_CTYPE,"Russian");
+	static const TCHAR* TITLE = TEXT("Нахождение производных таблично-заданной функции по формулам численного дифференцирования, вариант 5");
+	SetConsoleTitle(TITLE);
+	bool у_меня_кончилась_фантазия = 1;
+	while (у_меня_кончилась_фантазия == 1)
+	{
+
+	double a;
+	double b;
+	int m;
+	double h;
+	cout << "Введите координату начала отрезка" << endl;
+	cin >> a;
+	cout << "Введите координату конца отрезка" << endl;
+	cin >> b;
+	cout << "Введите количество узлов." << endl;
+	cin >> m;
+	double e;
+	cout << "Введите погрешность." << endl;
+	cin >> e;
+	cout << fixed << setprecision(20);
+	h = (b-a)/m;
+	cout << "Таблица значений функции cos(x)+ 2*x" << endl;
+	cout << setw(30) << "x" << setw(30) << "f(x)" << setw(30) << endl;
+	for (int i = 0; i < m ; i++)
+		cout << setw(30) << a+ i*h << setw(30) << f(a+i*h) << endl;
+	cout << "-------------------------------" << endl;
+
+
+  double *array_for_x = new double[m];
+  double *array_for_fx = new double[m];
+
+   for (int i = 0; i < m; i++)
+   {
+    array_for_fx[i] = a+ i*h;
+    array_for_x[i] = f(a+i*h);
+   }
+
+   double x0;
+    cout << "Введите точку, в которой будет искаться значение обратной функции." << endl;
+  cin >> x0;
+  double *dist = new double[m];
+  for (int i = 0; i < m; i++)
+   dist[i] = fabs(array_for_x[i] - x0);
+  qus(0, m - 1, array_for_fx, array_for_x, dist);
+  delete[] dist;
+
+  cout << "Значение обратной функции в этой точке (первый способ): " << Langrange(array_for_x, array_for_fx, m, x0) << endl;
+  cout << "Погрешность (первый способ): " << abs(f(Langrange(array_for_x, array_for_fx, m, x0)) - x0) << endl;
+
+  cout << "Значение обратной функции в этой точке (второй способ): " << Newton(array_for_x, array_for_fx, m, x0) << endl;
+  cout << "Погрешность (второй способ): " << abs(f(Newton(array_for_x, array_for_fx, m, x0)) - x0) << endl;
+
+
+
+
+				cout << "Введите 1, чтобы повторить приключение, введите 0, чтобы сбежать из этой программы." << endl;
+	cin >> у_меня_кончилась_фантазия;
+}
+	return 0;
+}
