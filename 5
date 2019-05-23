@@ -1,0 +1,156 @@
+#include <iostream>
+#include <windows.h>
+#include <iomanip>
+#include <stdio.h>
+#include <math.h>
+using namespace std;
+
+
+double po(double a, int b)
+{
+	double temp = 1;
+	for (int i = 0; i < b; i++)
+		temp = temp * a;
+	return temp;
+};
+
+
+int fact (int n)
+{
+	if (n == 0 ) return 1;
+	else
+	return n*fact(n-1);
+}
+
+double yx(double arr[5], double x)
+{
+	double y = 0;
+	for (int i = 0; i < 5; i++)
+	{if (arr[i] != 0)
+		y = y + arr[i]*po(x, i)/fact(i);}
+	return y;
+}
+
+double frk(double x, double y)
+{
+	return -y+sin(x);
+}
+
+
+int main()
+{
+	setlocale(LC_CTYPE,"Russian");
+	static const TCHAR* TITLE = TEXT("Численное решение Задачи Коши для обыкновенного дифференциального уравнения первого порядка, вариант 5");
+	SetConsoleTitle(TITLE);
+	bool у_меня_кончилась_фантазия = 1;
+	while (у_меня_кончилась_фантазия == 1)
+	{ double y0;
+	int N;
+	cout << "Введите, в скольки точках, больших, чем ноль, будет искаться точное значение." << endl;
+	cin >> N;
+	double h;
+	cout << "Введите шаг." << endl;
+	cout << fixed << setprecision(16);
+	cin >> h;
+	system ("cls");
+	cout << "Таблица значений точного решения уравнения y'(x)= - y(x)+ sin(x):" << endl;
+	cout << setw(20) << "x" << setw(20) << "f(x)" << endl;
+	for (int i = -2; i < N + 1; i++)
+		cout << setw(20) << i*h << setw(20) << 1.5*exp(i*h) - 0.5*sin(i*h) - 0.5*cos(i*h) << endl;
+		double y[5];
+		y[0] = 1;
+		y[1] = -1;
+		y[2] = 2;
+		y[3] = -2;
+		y[4] = 1;
+
+
+
+		cout << "Таблица значений решения уравнения y'(x)= - y(x)+ sin(x) методом разложения в ряд Тейлора:" << endl;
+	cout << setw(20) << "x" << setw(20) << "f(x)" << setw(20) << "Погрешность" << endl;
+	for (int i = -2; i < N + 1; i++)
+		cout << setw(20) <<  i*h << setw(20) << yx(y, i*h) << setw(20) << abs(1.5*exp(i*h) - 0.5*sin(i*h) - 0.5*cos(i*h) - yx(y, i*h)) << endl;
+
+
+
+
+		double *x = new double[N+1];
+        double *y1= new double[N+1];
+        double *y2= new double[N+1];
+        double *y3= new double[N+1];
+        double *y4= new double[N+1];
+        double *y5= new double[N+1];
+		x[0] = 0;
+		y5[0] = 1;
+		for(int i = 1; i < N + 1; i++){
+                x[i]=i*h;
+                y1[i]=h*frk(x[i-1],y5[i-1]);
+                y2[i]=h*frk(x[i-1]+h/2.0,y5[i-1]+y1[i]/2.0);
+                y3[i]=h*frk(x[i-1]+h/2,y5[i-1]+y2[i]/2);
+                y4[i]=h*frk(x[i-1]+h,y5[i-1]+y3[i]);
+                y5[i]=y5[i-1]+(y1[i]+2*y2[i]+2*y3[i]+y4[i])/6;
+        }
+
+
+			cout << "Таблица значений решения уравнения y'(x)= - y(x)+ sin(x) методом Рунге-Кутта:" << endl;
+	cout << setw(20) << "x" << setw(20) << "f(x)" << setw(20) << "Погрешность" << endl;
+	for (int i = 1; i < N + 1; i++)
+		cout << setw(20) <<  i*h << setw(20) << y5[i] << setw(20) << abs(1.5*exp(i*h) - 0.5*sin(i*h) - 0.5*cos(i*h) - y5[i]) << endl;
+
+
+
+	double *ye = new double[N+1];
+	ye[0] = 1;
+	for (int i = 1; i < N+1; i++)
+		ye[i] = ye[i-1] + h*(-ye[i-1] + sin((i-1)*h));
+
+
+
+		cout << "Таблица значений решения уравнения y'(x)= - y(x)+ sin(x) методом Эйлера-1:" << endl;
+	cout << setw(20) << "x" << setw(20) << "f(x)" << setw(20) << "Погрешность" << endl;
+	for (int i = 1; i < N + 1; i++)
+		cout << setw(20) <<  i*h << setw(20) << ye[i] << setw(20) << abs(1.5*exp(i*h) - 0.5*sin(i*h) - 0.5*cos(i*h) - ye[i]) << endl;
+
+
+
+
+		double *ye2 = new double[N+1];
+		double *ye05 = new double[N+1];
+	ye2[0] = 1;
+	for (int i = 1; i < N+1; i++)
+	{ ye05[i] = ye2[i-1]+(h/2)*(-ye2[i-1] + sin((i-1)*h));
+		ye2[i] = ye2[i-1] + h*(-ye05[i] + sin((i-1)*h + h/2));
+	}
+
+
+		cout << "Таблица значений решения уравнения y'(x)= - y(x)+ sin(x) методом Эйлера-2:" << endl;
+	cout << setw(20) << "x" << setw(20) << "f(x)" << setw(20) << "Погрешность" << endl;
+	for (int i = 1; i < N + 1; i++)
+		cout << setw(20) <<  i*h << setw(20) << ye2[i] << setw(20) << abs(1.5*exp(i*h) - 0.5*sin(i*h) - 0.5*cos(i*h) - ye2[i]) << endl;
+
+
+
+
+	
+		double *ye3 = new double[N+1];
+		double *ye305 = new double[N+1];
+	ye3[0] = 1;
+	for (int i = 1; i < N+1; i++)
+	{ ye305[i] = ye3[i-1]+h*(-ye3[i-1] + sin((i-1)*h));
+		ye3[i] = ye3[i-1] + (h/2)*(-ye3[i-1] + sin((i-1)*h) - ye305[i] + sin(h*i));
+	}
+
+
+		cout << "Таблица значений решения уравнения y'(x)= - y(x)+ sin(x) методом Эйлера-3:" << endl;
+	cout << setw(20) << "x" << setw(20) << "f(x)" << setw(20) << "Погрешность" << endl;
+	for (int i = 1; i < N + 1; i++)
+		cout << setw(20) <<  i*h << setw(20) << ye3[i] << setw(20) << abs(1.5*exp(i*h) - 0.5*sin(i*h) - 0.5*cos(i*h) - ye3[i]) << endl;
+
+
+
+
+			cout << "Введите 1, чтобы повторить приключение, введите 0, чтобы сбежать из этой программы." << endl;
+			cin >> у_меня_кончилась_фантазия;
+}
+	return 0;
+}
