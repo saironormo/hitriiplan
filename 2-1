@@ -1,0 +1,168 @@
+#include <iostream>
+#include <windows.h>
+#include <iomanip>
+#include <stdio.h>
+#include <math.h>
+using namespace std;
+
+
+
+int main()
+{
+	setlocale(LC_CTYPE,"Russian");
+	static const TCHAR* TITLE = TEXT("Решение нелинейного уравнения, вариант 5");
+	SetConsoleTitle(TITLE);
+	bool у_меня_кончилась_фантазия = 1;
+	while (у_меня_кончилась_фантазия == 1)
+	{
+		
+		double A, B, e, h;
+	cout << "Введите координату начала отрезка." << endl;
+	cin >> A;
+	cout << "Введите координату конца отрезка." << endl;
+	cin >> B;
+	cout << "Введите необходимую точность" << endl;
+	cin >> e;
+	cout << "Введите шаг табулирования" << endl;
+	cin >> h;
+		system ("cls");
+		cout << "Ищем корни функции x*sin(x)-1 на промежутке [" << A << "," << B << "] с точностью " << e << "." <<endl; 
+		double c;
+		c = (B-A)/h;
+		int count;
+		count = floor(c);
+		double *array = new double[count+1];
+		array[0] = A;
+		array[count+1] = B;
+		for (int i = 1; i < count + 1; i++)
+			array[i] = array[i-1]+h;
+		double *answers = new double[count];
+		int *array_for_j = new int [count];
+			double *first = new double[count];
+		double *lenght = new double[count];
+
+
+
+		for (int i = 0; i < count + 1 ; i++)
+		{	double a, b, s;
+		a = array[i];
+		b = array [i+1];
+		 s = (a + b) / 2;
+		first[i] = s;
+		int j = 0;
+			while ((s*sin(s)-1)*(s*sin(s)-1) >= e*e)
+			{ j++;
+        s = (a + b) / 2;
+        if((b*sin(b)-1) * (s*sin(s)-1) < 0)
+            a = s;
+        else
+            b = s;
+			}
+			answers[i] = s;
+			array_for_j[i] = j;
+			lenght[i] = b - a;
+		}
+		cout << "Метод бисекции:" << endl;
+		for (int i = 0; i < count+1; i++)
+			{cout << "Корень номер " << i+1 << ": " << answers[i] << ". Чтобы отыскать его, потребовалось такое число шагов: " << array_for_j[i] << "Модуль невязки: " << abs(answers[i]*sin(answers[i]) - 1) << "Начальное приближение:" << first[i] << endl;
+		cout << "Между прочим, длина последнего отрезка такова: " << lenght[i] << endl;
+		cout << endl;};
+		cout << "--------------------------------------------------" << endl;
+
+
+		int *temp = new int [count];
+
+		for (int i = 0; i < count+1 ; i++)
+		{	double s;
+		s = array[i];
+		first[i] = s;
+		int j = 0;
+
+			while ((s*sin(s)-1)*(s*sin(s)-1) >= e*e)
+			{ j++;
+			temp[i] = s;
+        s = s - ((s*sin(s)-1)/(s*cos(s)+sin(s)));
+		if (s > array[i+1] || s < array [i])
+		{s = array[i] + 0.01* (array[i+1] - array[i]) * (rand() % 101);
+		j = 0;}
+
+			}
+			answers[i] = s;
+			array_for_j[i] = j;
+		}
+		cout << "Метод Ньютона:" << endl;
+		for (int i = 0; i < count + 1; i++)
+		{	cout << "Корень номер " << i+1 << ": " << answers[i] << ". Чтобы отыскать его, потребовалось такое число шагов: " << array_for_j[i] << "Модуль невязки: " << abs(answers[i]*sin(answers[i]) - 1) << "Начальное приближение:" << first[i] << endl;
+		cout << "Между прочим, на предыдущем шаге корень получался таким: " << temp[i] << endl;
+		cout << endl;};
+		cout << "--------------------------------------------------" << endl;
+
+		
+		for (int i = 0; i < count+1 ; i++)
+		{	double s, x0;
+		s = array[i];
+		first[i] = s;
+		x0 = (s*cos(s)+sin(s));
+		int j = 0;
+
+			while ((s*sin(s)-1)*(s*sin(s)-1) >= e*e)
+			{ j++;
+			temp[i] = s;
+        s = s - ((s*sin(s)-1)/x0);
+		if (s > array[i+1]|| s < array [i])
+		{s = array[i] + 0.01* (array[i+1] - array[i]) * (rand() % 101);
+		j = 0;
+			x0 = (s*cos(s)+sin(s));}
+
+			}
+			answers[i] = s;
+			array_for_j[i] = j;
+		}
+		cout << "Модифицированный метод Ньютона:" << endl;
+		for (int i = 0; i < count+1; i++)
+			{cout << "Корень номер " << i+1 << ": " << answers[i] << ". Чтобы отыскать его, потребовалось такое число шагов: " << array_for_j[i] << "Модуль невязки: " << abs(answers[i]*sin(answers[i]) - 1) <<"Начальное приближение:" << first[i] << endl;
+		cout << "Между прочим, на предыдущем шаге корень получался таким: " << temp[i] << endl;
+		cout << endl;};
+		cout << "--------------------------------------------------" << endl;
+
+
+
+
+			for (int i = 0; i < count+1 ; i++)
+		{	double s;
+		double prev_s;
+		double temp1;
+		s = array[i];
+		first[i] = s;
+			prev_s = array[i+1];
+		int j = 0;
+
+			while ((s*sin(s)-1)*(s*sin(s)-1) >= e*e)
+			{ j++;
+			temp1 = s;
+			temp[i] = s;
+        s = s - ((s-prev_s)*(s*sin(s)-1)/((s*sin(s)-1)-(prev_s*sin(prev_s)-1)));
+		prev_s = temp1;
+		if (s > array[i+1]|| s < array [i])
+		{s = array[i] + 0.01* (array[i+1] - array[i]) * (rand() % 101);
+		prev_s = array[i+1] + 0.01* (array[i+1] - array[i]) * (rand() % 101);
+		j = 0;}
+
+			}
+			answers[i] = s;
+			array_for_j[i] = j;
+		}
+		cout << "Метод секущих:" << endl;
+		for (int i = 0; i < count+1; i++)
+			{cout << "Корень номер " << i+1 << ": " << answers[i] << ". Чтобы отыскать его, потребовалось такое число шагов: " << array_for_j[i] << "Модуль невязки: " << abs(answers[i]*sin(answers[i]) - 1) <<"Начальное приближение:" << first[i] << endl;
+		cout << "Между прочим, на предыдущем шаге корень получался таким: " << temp[i] << endl;
+		cout << endl;};
+
+
+
+
+		cout << "Введите 1, чтобы повторить приключение, введите 0, чтобы сбежать из этой программы." << endl;
+	cin >> у_меня_кончилась_фантазия;
+}
+	return 0;
+}
