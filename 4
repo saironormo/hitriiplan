@@ -1,0 +1,141 @@
+#include <iostream>
+#include <windows.h>
+#include <iomanip>
+#include <stdio.h>
+#include <math.h>
+using namespace std;
+
+double f(double x)
+{ return sin(x);
+}
+double w( double x)
+{return -log(x);}
+
+double po (int a, double b)
+{ double temp = 1;
+	for (int i = 0; i < a; i++)
+		temp = temp*b;
+	return temp;}
+
+double integ (double a, double b, int i)
+{
+	i = i+1;
+	if (b==0)
+		return -(- po(i, b)/i/i - po(i, a)*log(a)/i + po(i, a)/i/i);
+	else if (a == 0)
+		return -(po(i, b)*log(b)/i - po(i, b)/i/i -+ po(i, a)/i/i);
+	else return -(po(i, b)*log(b)/i - po(i, b)/i/i - po(i, a)*log(a)/i + po(i, a)/i/i);
+}
+
+int main()
+{
+	setlocale(LC_CTYPE,"Russian");
+	static const TCHAR* TITLE = TEXT("Приближенное вычисление интегралов с помощью КФ НАСТ, вариант 5");
+	SetConsoleTitle(TITLE);
+	bool у_меня_кончилась_фантазия = 1;
+	while (у_меня_кончилась_фантазия == 1)
+	{double A;
+		cout << "Введите координату начала отрезка." << endl;
+		cin >> A;
+		double B;
+		cout << "Введите координату конца отрезка." << endl;
+		cin >> B;
+		int N;
+		int m;
+		cout << "Введите число узлов." << endl;
+		cin >> N;
+		cout << "Введите число промежутков деления." << endl;
+		cin >> m;
+
+		 double J;
+		 double h = (B-A)/m;
+		 J = 0;
+		 for (int i = 0; i < m; i++)
+		 J = J - (sin(-h/2/sqrt(3)+(A+i*h+A+(i+1)*h)/2))*log(-h/2/sqrt(3)+(A+i*h+A+(i+1)*h)/2) - (sin(h/2/sqrt(3)+(A+i*h+A+(i+1)*h)/2))*log(h/2/sqrt(3)+(A+i*h+A+(i+1)*h)/2);
+		 J = J*h/2;
+
+		 cout << "Приближенное значение определенного интеграла функции -sin(x)*ln(x) на промежутке от " << A << " до " << B << ", вычисленное с помощью составной КФ Гаусса, = " << J << endl;
+
+		 
+
+
+
+
+
+		double *mu = new double [N*2];
+
+
+		for (int i = 0; i < N*2; i++)
+		{mu[i] = integ (A, B, i);
+		cout << "mu[" << i << "] = " << mu[i] << endl;
+		}
+
+
+		double **matrix = new double *[N];
+		for (int i = 0; i < N; i++)
+			matrix[i] = new double[N+1];
+		for (int i = 0; i < N; i++)
+			for (int j = 0; j < N+1; j++)
+			{ if (j == N)
+				matrix[i][j] = -mu[N+i];
+			else 
+				matrix [i][j] = mu[N-1-j+i];
+
+			}
+
+		
+	double temp;
+	double *ax = new double[N+1];
+
+	  for (int i = 0; i< N; i++)
+    {
+        temp = matrix[i][i];
+        for (int j = N; j >= i; j--)
+            matrix[i][j] /= temp;
+        for (int j = i + 1; j< N; j++)
+        {
+            temp = matrix[j][i];
+            for (int k = N; k >= i; k--)
+                matrix[j][k] -= temp*matrix[i][k];
+        }
+    }
+
+    ax[N - 1] = matrix[N - 1][N];
+    for (int i = N - 2; i >= 0; i--)
+    {
+        ax[i] = matrix[i][N];
+        for (int j = i + 1; j< N; j++) ax[i] -= matrix[i][j] * ax[j];
+    }
+
+
+	cout << "Многочлен с коэффициентами ах:" << endl;
+	cout << "x^" << N;
+    for (int i = 0; i < N-1; i++)
+        cout << " + " << ax[N-2-i] << "x^" << N-1-i << " ";
+	cout << " + "<< ax[N-1];
+    cout << endl;
+
+	double *x = new double[N];
+	x[0] = (-ax[0]- sqrt(ax[0]*ax[0]-4*ax[1]))/2;
+	x[1] = (-ax[0]+ sqrt(ax[0]*ax[0]-4*ax[1]))/2;
+
+	cout << "x1 = " << x[0] << endl;
+	cout << "x2 = " << x[1] << endl;
+
+	double a1;
+	a1 =(mu[1] - x[1]*mu[0])/(x[0]-x[1]);
+	double a2;
+	a2 =(mu[1] - x[0]*mu[0])/(x[1]-x[0]);
+
+	cout << "A1 = " << a1 << endl;
+	cout << "A2 = " << a2 << endl;
+
+ double I;
+ I  = a1*f(x[0]) + a2* f(x[1]);
+ cout << "Приближенное значение определенного интеграла функции -sin(x)*ln(x) на промежутке от " << A << " до " << B << ", вычисленное с помощью КФ типа Гаусса, = " << I << endl;
+
+		cout << "Введите 1, чтобы повторить приключение, введите 0, чтобы сбежать из этой программы." << endl;
+	cin >> у_меня_кончилась_фантазия;
+}
+	return 0;
+}
