@@ -26,6 +26,7 @@ int main()
 	cout << "Введите шаг табулирования" << endl;
 	cin >> h;
 		system ("cls");
+		cout << fixed << setprecision(16);
 		cout << "Ищем корни функции x*sin(x)-1 на промежутке [" << A << "," << B << "] с точностью " << e << "." <<endl; 
 		double c;
 		c = (B-A)/h;
