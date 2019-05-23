@@ -1,0 +1,89 @@
+#include <iostream>
+#include <windows.h>
+#include <iomanip>
+#include <stdio.h>
+#include <math.h>
+using namespace std;
+
+
+
+int main()
+{
+	setlocale(LC_CTYPE,"Russian");
+	static const TCHAR* TITLE = TEXT("Приближенное вычисление интеграла по составным квадратурным формулам, вариант 5");
+	SetConsoleTitle(TITLE);
+	bool у_меня_кончилась_фантазия = 1;
+	while (у_меня_кончилась_фантазия == 1)
+	{
+		double A;
+		cout << "Введите координату начала отрезка." << endl;
+		cin >> A;
+		double B;
+		cout << "Введите координату конца отрезка." << endl;
+		cin >> B;
+		double m;
+		cout << "Введите число промежутков деления." << endl;
+	cin >> m;
+
+double h;
+h = (B-A)/m;
+
+
+		system ("cls");
+		double J = sin(B) - sin(A);
+		cout << "Интеграл от cosx по промежутку от " << A << " до " << B << " равен: " << J << endl;
+		
+
+		double Jh;
+		Jh = 0;
+		for (int i = 0; i < m; i++)
+		Jh = Jh + cos(A+i*h);
+		Jh = Jh*h;
+		cout << fixed << setprecision(16);
+	cout << setw(10) << "Значение интеграла по составной квадратурной формуле левых прямоугольников: " <<  endl;
+cout << Jh << endl;
+	cout << setw(10) << "Погрешность:" << setw(10) << abs(J - Jh)  << endl;
+
+	Jh = 0;
+	for (int i = 0; i < m; i++)
+		Jh = Jh + cos(A+i*h + h);
+		Jh = Jh*h;
+	cout << setw(10) << "Значение интеграла по составной квадратурной формуле правых прямоугольников: " <<  endl;
+cout << Jh << endl;
+	cout << setw(10) << "Погрешность:" << setw(10) << abs(J - Jh)  << endl;
+	Jh = 0;
+	for (int i = 0; i < m; i++)
+		Jh = Jh + cos(A+i*h + h/2);
+		Jh = Jh*h;
+	cout << setw(10) << "Значение интеграла по составной квадратурной формуле средних прямоугольников: " << endl;
+	cout << Jh << endl;
+	cout << setw(10) << "Погрешность:" << setw(10) << abs(J - Jh)  << endl;
+
+	Jh = cos(A) + cos(B);
+	for (int i = 1; i < m-1; i++)
+		Jh = Jh + 2*cos(A+i*h + h/2);
+		Jh = Jh*h/2;
+	cout << setw(10) << "Значение интеграла по составной квадратурной формуле трапеций: " <<  endl;
+	cout << Jh << endl;
+	cout << setw(10) << "Погрешность:" << setw(10) << abs(J - Jh)  << endl;
+
+
+	Jh = cos(A) + cos(B);
+	h = h/2;
+	for (int i = 1; i < m*2-1; i++)
+	{ 
+		Jh = Jh + 2*cos(A+i*h + h/2);
+		if(i%2 == 1)
+			Jh = Jh + 2*cos(A+i*h + h/2);
+	}
+		Jh = Jh*h/3;
+	cout << setw(10) << "Значение интеграла по составной квадратурной формуле Симпсона: " <<  endl;
+	cout << Jh << endl;
+	cout << setw(10) << "Погрешность:" << setw(10) << abs(J - Jh)  << endl;
+
+
+		cout << "Введите 1, чтобы повторить приключение, введите 0, чтобы сбежать из этой программы." << endl;
+	cin >> у_меня_кончилась_фантазия;
+}
+	return 0;
+}
