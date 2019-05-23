@@ -1,0 +1,53 @@
+#include <iostream>
+#include <windows.h>
+#include <iomanip>
+#include <stdio.h>
+#include <math.h>
+using namespace std;
+
+double f(double x)
+{
+	return exp(1.5*x);
+}
+
+
+int main()
+{
+	setlocale(LC_CTYPE,"Russian");
+	static const TCHAR* TITLE = TEXT("Нахождение производных таблично-заданной функции по формулам численного дифференцирования, вариант 5");
+	SetConsoleTitle(TITLE);
+	bool у_меня_кончилась_фантазия = 1;
+	while (у_меня_кончилась_фантазия == 1)
+	{
+
+	double a;
+	int m;
+	double h;
+	cout << "Введите начальную точку." << endl;
+	cin >> a;
+	cout << "Введите количество точек, не считая начальной, в таблице." << endl;
+	cin >> m;
+	cout << "Введите шаг." << endl;
+	cin >> h;
+	cout << fixed << setprecision(4);
+
+	cout << "Таблица значений функции e^(1.5*x)" << endl;
+	cout << setw(10) << "x" << setw(10) << "f(x)" << setw(10) << endl;
+	for (int i = 0; i < m + 1; i++)
+		cout << setw(10) << a+ i*h << setw(10) << f(a+i*h) << endl;
+	cout << "-------------------------------" << endl;
+
+	cout << setw(10) << "x" << setw(10) << "f(x)" << setw(10) <<  "f'чд(x)" << setw(10) <<  "Погрешность" << setw(10) << "f''чд(x)" << setw(10) <<  "Погрешность" << setw(10) <<endl;
+	cout << setw(10) << a  << setw(10) << f(a) <<  setw(10) << (-3*f(a) + 4*f(a+h)-f(a+2*h))/2/h << setw(10) << abs(1.5*f(a)-(-3*f(a) + 4*f(a+h)-f(a+2*h))/2/h) << setw(10) << " --- " << setw(10) << " --- " <<  endl;
+
+	for (int i = 1; i < m ; i++)
+		cout << setw(10) << a+ i*h << setw(10) << f(a+i*h) <<  setw(10) << (f(a+(i+1)*h)-f(a+(i-1)*h))/2/h << setw(10) << abs(1.5*f(a+i*h)-(f(a+(i+1)*h)-f(a+(i-1)*h))/2/h) << setw(10) << (f(a+(i+1)*h)-2*f(a+i*h) + f(a+(i-1)*h))/h/h << setw(10) << abs(2.25*f(a+i*h) -(f(a+(i+1)*h)-2*f(a+i*h) + f(a+(i-1)*h))/h/h) <<  endl;
+
+	cout << setw(10) << a+ m*h << setw(10) << f(a+m*h) <<  setw(10) << (3*f(a+m*h) - 4*f(a+m*h-h)+f(a+m*h-2*h))/2/h  << setw(10) << abs(1.5*f(a+m*h)-(3*f(a+m*h) - 4*f(a+m*h-h)+f(a+m*h-2*h))/2/h) << setw(10) << " --- " << setw(10) << " --- " <<  endl;
+
+
+				cout << "Введите 1, чтобы повторить приключение, введите 0, чтобы сбежать из этой программы." << endl;
+	cin >> у_меня_кончилась_фантазия;
+}
+	return 0;
+}
